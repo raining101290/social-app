@@ -1,0 +1,98 @@
+import BackButton from '@/components/BackButton';
+import Button from '@/components/Button';
+import Input from '@/components/Input';
+import ScreenWrapper from '@/components/ScreenWrapper';
+import { COLORS } from '@/constants/colors';
+import { CirclePasswordIcon, Mail01Icon, UserIcon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react-native';
+import { router } from 'expo-router';
+import React, { useState } from 'react';
+import { Pressable, StatusBar, Text, View } from 'react-native';
+
+const Register = () => {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = React.useState(false);
+    const onSubmit = () => {
+        if (!name || !email || !password) {
+            alert('Please fill all the fields');
+            return;
+        }
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+        }, 1000);
+    };
+    return (
+        <ScreenWrapper>
+            <StatusBar barStyle="dark-content" />
+            <View className="flex-1 gap-8 px-4">
+                <BackButton />
+
+                <View>
+                    <Text className="text-4xl font-extrabold text-text py-2">
+                        Let&apos;s,
+                    </Text>
+                    <Text className="text-4xl font-extrabold text-text py-2">
+                        Get Started!
+                    </Text>
+                </View>
+
+                <View>
+                    <Text className="text-lg text-text">Please register to continue</Text>
+                    <Input
+                        icon={<HugeiconsIcon icon={UserIcon} color={COLORS.text} />}
+                        inputClass=""
+                        containerClass="mt-6 mb-4"
+                        placeholder="Enter your name"
+                        value={name}
+                        onChangeText={setName}
+                    />
+                    <Input
+                        icon={<HugeiconsIcon icon={Mail01Icon} color={COLORS.text} />}
+                        inputClass=""
+                        containerClass="mt-6 mb-4"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChangeText={setEmail}
+                    />
+                    <Input
+                        icon={
+                            <HugeiconsIcon
+                                icon={CirclePasswordIcon}
+                                color={COLORS.text}
+                            />
+                        }
+                        inputClass=""
+                        containerClass="mt-6 mb-4"
+                        secureTextEntry
+                        placeholder="Enter your password"
+                        value={password}
+                        onChangeText={setPassword}
+                    />
+                    <Text className="text-right text-primaryDark font-bold mt-2 mb-4">
+                        Forgot Password?
+                    </Text>
+
+                    <Button
+                        buttonStyle="bg-primary justify-center items-center rounded-md py-3 px-6"
+                        textStyle="text-lg font-bold text-white"
+                        title="Register"
+                        hasShadow
+                        loading={loading}
+                        onPress={onSubmit}
+                    />
+                    <View className="flex-row items-center justify-center mt-12">
+                        <Text className="text-text">Already have an account? </Text>
+                        <Pressable onPress={() => router.push('/login')}>
+                            <Text className="text-primaryDark font-bold">Login</Text>
+                        </Pressable>
+                    </View>
+                </View>
+            </View>
+        </ScreenWrapper>
+    );
+};
+
+export default Register;
