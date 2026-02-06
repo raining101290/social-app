@@ -4,14 +4,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type wrapperProps = {
     children: React.ReactNode;
-    bg: string;
+    bg?: string;
+    className?: string;
 }
 
-const ScreenWrapper = ({children, bg}:wrapperProps) => {
+const ScreenWrapper = ({children, className}:wrapperProps) => {
     const {top}  = useSafeAreaInsets();
     const paddingTop = top>0 ? top + 5 : 30;
   return (
-    <View className={`flex-1 ${bg}`} style={{paddingTop}}>
+    <View className={`flex-1 ${className}`} style={{paddingTop}}>
       {children}
     </View>
   )
