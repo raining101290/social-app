@@ -3,31 +3,50 @@ import Button from '@/components/Button';
 import Input from '@/components/Input';
 import ScreenWrapper from '@/components/ScreenWrapper';
 import { COLORS } from '@/constants/colors';
+import { loginApi } from '@/lib/api';
+import { saveToken } from '@/lib/auth-storage';
 import { CirclePasswordIcon, Mail01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { router } from 'expo-router';
-import React from 'react';
-import { Pressable, StatusBar, Text, TextInput, View } from 'react-native';
+import React, { useState } from 'react';
+import { Pressable, StatusBar, Text, View } from 'react-native';
 
 const Login = () => {
-    const emailRef = React.useRef<TextInput>(null);
-    const passwordRef = React.useRef<TextInput>(null);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [loading, setLoading] = React.useState(false);
-    const onSubmit = () => {
-        if (!emailRef.current || !passwordRef.current) {
+    const onSubmit = async () => {
+        if (!email || !password) {
             alert('Please fill all the fields');
             return;
         }
-        setLoading(true);
-        setTimeout(() => {
+
+        try {
+            setLoading(true);
+
+            const res = await loginApi({
+                email,
+                password,
+            });
+
+            if (res.success) {
+                await saveToken(res.token);
+                router.replace('/home');
+            } else {
+                alert('Login failed');
+            }
+        } catch (err: any) {
+            alert(err.message || 'Something went wrong');
+        } finally {
             setLoading(false);
-        }, 2000);
+        }
     };
+
     return (
         <ScreenWrapper>
             <StatusBar barStyle="dark-content" />
             <View className="flex-1 gap-8 px-4">
-                <BackButton />
+                <BackButton router={router} />
 
                 <View>
                     <Text className="text-4xl font-extrabold text-text py-2">Hey, </Text>
@@ -44,10 +63,8 @@ const Login = () => {
                         inputClass=""
                         containerClass="mt-6 mb-4"
                         placeholder="Enter your email"
-                        inputRef={emailRef}
-                        onChangeText={text => {
-                            emailRef.current = text;
-                        }}
+                        value={email}
+                        onChangeText={setEmail}
                     />
                     <Input
                         icon={
@@ -60,10 +77,8 @@ const Login = () => {
                         containerClass="mt-6 mb-4"
                         secureTextEntry
                         placeholder="Enter your password"
-                        inputRef={passwordRef}
-                        onChangeText={text => {
-                            passwordRef.current = text;
-                        }}
+                        value={password}
+                        onChangeText={setPassword}
                     />
                     <Text className="text-right text-primaryDark font-bold mt-2 mb-4">
                         Forgot Password?

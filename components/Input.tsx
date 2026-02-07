@@ -12,21 +12,32 @@ type InputProps = {
     secureTextEntry?: boolean;
     inputClass?: string;
     containerClass?: string;
+    multiline?: boolean;
 };
+
 const Input = (props: InputProps) => {
+    const isMultiline = props.multiline;
+
     return (
         <View
-            className={`flex-row items-center justify-center border border-light rounded-md px-4 py-3 gap-3 bg-white ${props.containerClass || ''}`}
+            className={`
+                flex-row border border-light rounded-md px-4 gap-3 bg-white
+                ${isMultiline ? 'py-3 min-h-[100px] items-start' : 'h-12 items-center'}
+                ${props.containerClass || ''}
+            `}
         >
             {props.icon && props.icon}
+
             <TextInput
                 {...props}
-                className={`flex-1 text-lg text-text ${props.inputClass || ''}`}
+                multiline={isMultiline}
+                className={`flex-1 text-base text-text ${props.inputClass || ''}`}
                 onChangeText={props.onChangeText}
                 secureTextEntry={props.secureTextEntry || false}
                 placeholder={props.placeholder}
                 placeholderTextColor={COLORS.textLight}
-                ref={props.inputRef && props.inputRef}
+                textAlignVertical={isMultiline ? 'top' : 'center'}
+                ref={props.inputRef}
             />
         </View>
     );

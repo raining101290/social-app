@@ -3,6 +3,8 @@ import Button from '@/components/Button';
 import Input from '@/components/Input';
 import ScreenWrapper from '@/components/ScreenWrapper';
 import { COLORS } from '@/constants/colors';
+import { signupApi } from '@/lib/api';
+import { saveToken } from '@/lib/auth-storage';
 import { CirclePasswordIcon, Mail01Icon, UserIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { router } from 'expo-router';
@@ -14,21 +16,41 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = React.useState(false);
-    const onSubmit = () => {
+    const onSubmit = async () => {
         if (!name || !email || !password) {
             alert('Please fill all the fields');
             return;
         }
-        setLoading(true);
-        setTimeout(() => {
+
+        try {
+            setLoading(true);
+
+            const res = await signupApi({
+                name,
+                email,
+                password,
+            });
+
+            if (res.success) {
+                await saveToken(res.token);
+                console.log('Signup success', res);
+                // navigate after signup
+                router.replace('/home');
+            } else {
+                alert('Signup failed');
+            }
+        } catch (err: any) {
+            alert(err.message || 'Something went wrong');
+        } finally {
             setLoading(false);
-        }, 1000);
+        }
     };
+
     return (
         <ScreenWrapper>
             <StatusBar barStyle="dark-content" />
             <View className="flex-1 gap-8 px-4">
-                <BackButton />
+                <BackButton router={router} />
 
                 <View>
                     <Text className="text-4xl font-extrabold text-text py-2">
