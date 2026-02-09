@@ -51,7 +51,6 @@ type UserHeaderProps = {
 };
 const UserHeader = ({ user, router, logout }: UserHeaderProps) => {
     const imageSource = user?.profileImage ? { uri: user.profileImage } : IMAGES.avatar;
-    console.log('Profile imageSource', user);
     return (
         <View className="flex-1 bg-white px-4">
             <View>
@@ -82,7 +81,7 @@ const UserHeader = ({ user, router, logout }: UserHeaderProps) => {
 
                     <View className="items-center">
                         <Text className="text-2xl font-bold text-textDark">
-                            {user?.name || 'John Doe'}
+                            {user?.name}
                         </Text>
                         <View className="flex-row items-center justify-center gap-2">
                             <HugeiconsIcon size={16} icon={Email} color={COLORS.text} />
