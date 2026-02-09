@@ -13,6 +13,7 @@ type InputProps = {
     inputClass?: string;
     containerClass?: string;
     multiline?: boolean;
+    numberOfLine?: number;
 };
 
 const Input = (props: InputProps) => {
@@ -31,6 +32,7 @@ const Input = (props: InputProps) => {
             <TextInput
                 {...props}
                 multiline={isMultiline}
+                numberOfLines={props.numberOfLine}
                 className={`flex-1 text-base text-text ${props.inputClass || ''}`}
                 onChangeText={props.onChangeText}
                 secureTextEntry={props.secureTextEntry || false}
