@@ -1,3 +1,4 @@
+import { IMAGES } from '@/constants/images';
 import { Image } from 'expo-image';
 import React from 'react';
 import { StyleSheet } from 'react-native';
@@ -24,7 +25,7 @@ const Avatar = ({ uri, rounded, size, style }: AvatarProps) => {
                 },
                 style,
             ]}
-            source={uri}
+            source={uri || IMAGES.avatar}
             placeholder={{ blurhash }}
             contentFit="cover"
             transition={1000}
