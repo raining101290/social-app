@@ -3,7 +3,10 @@ import Button from '@/components/Button';
 import Input from '@/components/Input';
 import ScreenWrapper from '@/components/ScreenWrapper';
 import { COLORS } from '@/constants/colors';
+import { useAuth } from '@/contexts/AuthContext';
+import { toAbsoluteUrl } from '@/helpers/common';
 import { signupApi } from '@/lib/api';
+import { getUser } from '@/lib/api-user';
 import { saveToken } from '@/lib/auth-storage';
 import { CirclePasswordIcon, Mail01Icon, UserIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react-native';
@@ -12,6 +15,7 @@ import React, { useState } from 'react';
 import { Pressable, StatusBar, Text, View } from 'react-native';
 
 const Register = () => {
+    const { setAuth } = useAuth();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -24,17 +28,26 @@ const Register = () => {
 
         try {
             setLoading(true);
-
             const res = await signupApi({
                 name,
                 email,
                 password,
             });
-
             if (res.success) {
                 await saveToken(res.token);
-                console.log('Signup success', res);
-                // navigate after signup
+                const me = await getUser();
+                const data = me.data;
+
+                const normalizedUser = {
+                    ...data,
+                    profileImage: data.profileImage
+                        ? toAbsoluteUrl(data.profileImage)
+                        : undefined,
+                };
+                setAuth({
+                    token: data.token,
+                    ...normalizedUser,
+                });
                 router.replace('/home');
             } else {
                 alert('Signup failed');
