@@ -1,6 +1,7 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react';
 
 export type AuthUser = {
+    _id: string;
     token: string;
     name?: string;
     email?: string;
