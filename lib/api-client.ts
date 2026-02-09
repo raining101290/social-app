@@ -1,6 +1,6 @@
 import { getToken } from '@/lib/auth-storage';
 
-export const API_BASE = 'http://localhost:5055/api';
+export const API_BASE = 'http://192.168.1.136:5055/api';
 
 type FetchOptions = RequestInit & {
     auth?: boolean;
@@ -27,7 +27,6 @@ export async function apiFetch(path: string, options: FetchOptions = {}) {
     });
 
     const data = await res.json().catch(() => ({}));
-
     if (!res.ok) {
         throw new Error(data?.message || 'Request failed');
     }
