@@ -4,9 +4,10 @@ import PostCard from '@/components/PostCard';
 import ScreenWrapper from '@/components/ScreenWrapper';
 import { COLORS } from '@/constants/colors';
 import { delay, HEIGHT_PERCENTAGE } from '@/helpers/common';
+import { getUnreadNotificationCountApi } from '@/lib/api-notification';
 import { getPostsApi, likePostApi } from '@/lib/api-post';
 import { BasePost } from '@/types/post';
-import { Heart, PlusSignSquareFreeIcons } from '@hugeicons/core-free-icons';
+import { Bell, PlusSignSquareFreeIcons } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
@@ -24,6 +25,7 @@ const Home = () => {
     const [hasMore, setHasMore] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [loadingMore, setLoadingMore] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
 
     const loadPosts = async () => {
         try {
@@ -40,6 +42,15 @@ const Home = () => {
         } finally {
             setRefreshing(false);
         }
+    };
+
+    const loadUnreadCount = async () => {
+        try {
+            const res = await getUnreadNotificationCountApi();
+            if (res.success) {
+                setUnreadCount(res.data);
+            }
+        } catch {}
     };
 
     const loadMore = async () => {
@@ -66,6 +77,7 @@ const Home = () => {
     useFocusEffect(
         useCallback(() => {
             loadPosts();
+            loadUnreadCount();
         }, [])
     );
 
@@ -138,16 +150,33 @@ const Home = () => {
             );
         }
     };
-
+    console.log('unreadCount::', unreadCount);
     return (
         <ScreenWrapper>
             <View className="flex-1">
                 <View className="flex-row items-center justify-between mb-6 mx-4">
                     <Text className="text-3xl font-bold text-text">Social</Text>
                     <View className="flex-row items-center gap-4">
+                        {/* <Pressable onPress={() => router.push('/notifications')}>
+                            <HugeiconsIcon icon={Bell} color={COLORS.text} />
+                        </Pressable> */}
                         <Pressable onPress={() => router.push('/notifications')}>
-                            <HugeiconsIcon icon={Heart} color={COLORS.text} />
+                            <View>
+                                <HugeiconsIcon icon={Bell} color={COLORS.text} />
+
+                                {unreadCount > 0 && (
+                                    <View
+                                        className="absolute -top-2 -right-2 bg-red-500 rounded-full px-1.5"
+                                        style={{ minWidth: 18, alignItems: 'center' }}
+                                    >
+                                        <Text className="text-white text-xs font-bold">
+                                            {unreadCount > 99 ? '99+' : unreadCount}
+                                        </Text>
+                                    </View>
+                                )}
+                            </View>
                         </Pressable>
+
                         <Pressable onPress={() => router.push('/newPost')}>
                             <HugeiconsIcon
                                 icon={PlusSignSquareFreeIcons}

@@ -14,7 +14,7 @@ const Header = ({ title, showBack = true, mb = 10 }: HeaderProps) => {
     return (
         <View
             style={{ marginBottom: mb }}
-            className="flex-row justify-center items-center mt-5 gap-2"
+            className="flex-row justify-center items-center mt-5 gap-2 px-4 relative"
         >
             {showBack && (
                 <View className="absolute left-0">
