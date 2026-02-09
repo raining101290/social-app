@@ -1,5 +1,6 @@
 import { IMAGES } from '@/constants/images';
 import { API_BASE } from '@/lib/api-client';
+import moment from 'moment';
 import { Dimensions, ImageSourcePropType } from 'react-native';
 
 const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
@@ -35,3 +36,24 @@ export const toImageSource = (path?: string): ImageSourcePropType => {
 
     return { uri: `${BASE_URL}${path.startsWith('/') ? path : '/' + path}` };
 };
+
+export const formatDate = (m: any) => {
+    let publishDate: string;
+
+    if (m.isSame(moment(), 'day')) {
+        // today
+        publishDate = `Today, ${m.format('hh:mm A')}`;
+    } else if (m.isSame(moment().subtract(1, 'day'), 'day')) {
+        // yesterday
+        publishDate = `Yesterday, ${m.format('hh:mm A')}`;
+    } else if (m.isAfter(moment().subtract(7, 'days'))) {
+        // within last 7 days
+        publishDate = `${m.format('dddd, hh:mm A')}`;
+    } else {
+        // older than 7 days
+        publishDate = m.format('DD MMM YYYY, hh:mm A');
+    }
+    return publishDate;
+};
+
+export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
