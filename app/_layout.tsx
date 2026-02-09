@@ -19,30 +19,35 @@ const MainLayout = () => {
 
     useEffect(() => {
         const fetchAuth = async () => {
-            setTimeout(async () => {
-                const token = await getToken();
-                if (token) {
-                    const me = await getUser();
-                    const data = me.data;
-                    console.log('Layout data', data);
-                    const normalizedUser = {
-                        ...data,
-                        profileImage: data.profileImage
-                            ? toAbsoluteUrl(data.profileImage)
-                            : undefined,
-                    };
-                    console.log('Layout normalizedUser', normalizedUser);
-                    setAuth({
-                        token,
-                        ...normalizedUser,
-                    });
+            const token = await getToken();
 
-                    router.replace('/home');
-                } else {
-                    setAuth(null);
-                    router.replace('/welcome');
-                }
-            }, 1000);
+            if (!token) {
+                setAuth(null);
+                router.replace('/welcome');
+                return;
+            }
+
+            try {
+                const me = await getUser();
+                const data = me.data;
+
+                const normalizedUser = {
+                    ...data,
+                    profileImage: data.profileImage
+                        ? toAbsoluteUrl(data.profileImage)
+                        : undefined,
+                };
+
+                setAuth({
+                    token: data.token,
+                    ...normalizedUser,
+                });
+
+                router.replace('/home');
+            } catch (e) {
+                setAuth(null);
+                router.replace('/welcome');
+            }
         };
 
         fetchAuth();
@@ -53,7 +58,9 @@ const MainLayout = () => {
             screenOptions={{
                 headerShown: false,
             }}
-        />
+        >
+            <Stack.Screen name="(main)/postDetails" options={{ presentation: 'modal' }} />
+        </Stack>
     );
 };
 
