@@ -6,13 +6,14 @@ import { HugeiconsIcon } from '@hugeicons/react-native';
 import { router } from 'expo-router';
 import moment from 'moment';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import Avatar from './Avatar';
 
 type Props = {
     item: BasePost;
     currentUserId?: string;
     onLike?: (postId: string) => void;
+    onDelete?: (postId: string) => void;
     showMore?: boolean;
     commentsCountOverride?: number;
 };
@@ -21,12 +22,12 @@ const PostCard = ({
     item,
     currentUserId,
     onLike,
+    onDelete,
     showMore = true,
     commentsCountOverride,
 }: Props) => {
     const m = moment(item.createdAt);
     const displayTime = formatDate(m);
-
     const liked = currentUserId ? item.likes.includes(currentUserId) : false;
 
     const likesCount = item.likes.length;
@@ -37,6 +38,19 @@ const PostCard = ({
         if (!showMore) return null;
         router.push({ pathname: '/postDetails', params: { postId: item._id } });
     };
+    const isOwner = item.userId?._id === currentUserId;
+
+    const openMenu = () => {
+        Alert.alert('Post options', undefined, [
+            {
+                text: 'Delete Post',
+                style: 'destructive',
+                onPress: () => onDelete?.(item._id),
+            },
+            { text: 'Cancel', style: 'cancel' },
+        ]);
+    };
+
     return (
         <View className="bg-white p-4 rounded-md border border-slate-100 mb-4">
             <View className="flex-row items-center gap-3 mb-2 justify-between">
@@ -55,8 +69,8 @@ const PostCard = ({
                         <Text className="text-xs text-gray-500">{displayTime}</Text>
                     </View>
                 </View>
-                {showMore && (
-                    <TouchableOpacity>
+                {showMore && isOwner && (
+                    <TouchableOpacity onPress={openMenu}>
                         <HugeiconsIcon icon={EllipsisVertical} color={COLORS.text} />
                     </TouchableOpacity>
                 )}

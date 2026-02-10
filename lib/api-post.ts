@@ -22,6 +22,13 @@ export function getPostDetailApi(postId: string) {
     });
 }
 
+export function deletePostApi(postId: string) {
+    return apiFetch(`/posts/${postId}`, {
+        method: 'DELETE',
+        auth: true,
+    });
+}
+
 export function likePostApi(postId: string) {
     return apiFetch(`/posts/${postId}/like`, {
         method: 'POST',

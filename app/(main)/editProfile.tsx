@@ -129,8 +129,8 @@ const EditProfile = () => {
     return (
         <ScreenWrapper className="bg-white">
             <View className="flex-1 bg-white px-4">
+                <Header title="Edit Profile" mb={30} />
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    <Header title="Edit Profile" mb={30} />
                     <View className="items-center mt-6 relative w-48 h-48 self-center">
                         <Image
                             className="w-full h-48 rounded-xxl"

@@ -19,6 +19,7 @@ export async function apiFetch(path: string, options: FetchOptions = {}) {
         if (token) {
             finalHeaders.Authorization = `Bearer ${token}`;
         }
+        // console.log('LOGGING', `${API_BASE}${path}::`, token);
     }
 
     const res = await fetch(`${API_BASE}${path}`, {

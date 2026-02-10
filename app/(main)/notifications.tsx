@@ -23,7 +23,6 @@ const Notification = () => {
         try {
             setLoading(true);
             const res = await getNotificationsApi(0, 20);
-            console.log('res::', res);
             if (res.success) {
                 setNotifications(res.data);
             }
@@ -39,7 +38,6 @@ const Notification = () => {
     };
 
     const openNotification = async (item: NotificationItem) => {
-        // mark read optimistically
         if (!item.read) {
             setNotifications(prev =>
                 prev.map(n => (n._id === item._id ? { ...n, read: true } : n))
@@ -64,7 +62,7 @@ const Notification = () => {
             <TouchableOpacity
                 onPress={() => openNotification(item)}
                 className={`flex-row items-center p-3 rounded-md mb-3 border ${
-                    item.read ? 'bg-white border-gray-100' : 'bg-blue-50 border-blue-100'
+                    item.read ? 'bg-white border-gray' : 'bg-blue-50 border-blue-100'
                 }`}
             >
                 <View className="mr-2 w-[38px] h-[38px]">

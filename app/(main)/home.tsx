@@ -5,7 +5,7 @@ import ScreenWrapper from '@/components/ScreenWrapper';
 import { COLORS } from '@/constants/colors';
 import { delay, HEIGHT_PERCENTAGE } from '@/helpers/common';
 import { getUnreadNotificationCountApi } from '@/lib/api-notification';
-import { getPostsApi, likePostApi } from '@/lib/api-post';
+import { deletePostApi, getPostsApi, likePostApi } from '@/lib/api-post';
 import { BasePost } from '@/types/post';
 import { Bell, PlusSignSquareFreeIcons } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react-native';
@@ -81,6 +81,17 @@ const Home = () => {
         }, [])
     );
 
+    const handleDelete = async (postId: string) => {
+        // optimistic remove
+        setPosts(prev => prev.filter(p => p._id !== postId));
+        try {
+            await deletePostApi(postId);
+        } catch {
+            // rollback if failed
+            loadPosts();
+        }
+    };
+
     const renderFooter = useCallback(() => {
         if (loadingMore) {
             return (
@@ -103,7 +114,13 @@ const Home = () => {
         return <Loading />;
     }
     const renderPost = ({ item }: { item: BasePost }) => (
-        <PostCard item={item} currentUserId={user._id} onLike={handleLike} showMore />
+        <PostCard
+            item={item}
+            currentUserId={user._id}
+            onLike={handleLike}
+            onDelete={handleDelete}
+            showMore
+        />
     );
     const renderEmpty = () => {
         if (refreshing) return null;
@@ -150,24 +167,21 @@ const Home = () => {
             );
         }
     };
-    console.log('unreadCount::', unreadCount);
+
     return (
         <ScreenWrapper>
             <View className="flex-1">
                 <View className="flex-row items-center justify-between mb-6 mx-4">
                     <Text className="text-3xl font-bold text-text">Social</Text>
                     <View className="flex-row items-center gap-4">
-                        {/* <Pressable onPress={() => router.push('/notifications')}>
-                            <HugeiconsIcon icon={Bell} color={COLORS.text} />
-                        </Pressable> */}
                         <Pressable onPress={() => router.push('/notifications')}>
                             <View>
                                 <HugeiconsIcon icon={Bell} color={COLORS.text} />
 
                                 {unreadCount > 0 && (
                                     <View
-                                        className="absolute -top-2 -right-2 bg-red-500 rounded-full px-1.5"
-                                        style={{ minWidth: 18, alignItems: 'center' }}
+                                        className="absolute -top-3 -right-3 bg-red-500 rounded-full px-2 py-1"
+                                        style={{ minWidth: 10, alignItems: 'center' }}
                                     >
                                         <Text className="text-white text-xs font-bold">
                                             {unreadCount > 99 ? '99+' : unreadCount}
